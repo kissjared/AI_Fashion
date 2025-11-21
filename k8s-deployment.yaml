@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-fashion-config
+  labels:
+    app: ai-fashion
+data:
+  # Note: Since this is a client-side build, the key is baked in at build time.
+  # If using a runtime config injection strategy, you would map this here.
+  # For this demo, we assume the image was built with the key.
+  APP_ENV: "production"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-fashion-deployment
+  labels:
+    app: ai-fashion
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-fashion
+  template:
+    metadata:
+      labels:
+        app: ai-fashion
+    spec:
+      containers:
+      - name: ai-fashion
+        image: ai-fashion-try-on:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-fashion-service
+spec:
+  type: LoadBalancer # Or NodePort/ClusterIP based on your cluster
+  selector:
+    app: ai-fashion
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

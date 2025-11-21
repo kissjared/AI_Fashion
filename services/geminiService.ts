@@ -2,8 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { cleanBase64, getMimeType } from "../utils/imageHelper";
 
 // Initialize the client
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Use the Nano Banana model (gemini-2.5-flash-image)
 const MODEL_NAME = 'gemini-2.5-flash-image';
@@ -12,16 +11,16 @@ const MODEL_NAME = 'gemini-2.5-flash-image';
  * Generate a clothing image based on text prompt.
  */
 export const generateClothingImage = async (prompt: string): Promise<string> => {
-  if (!apiKey) throw new Error("未配置 API Key");
+  if (!process.env.API_KEY) throw new Error("未配置 API Key");
 
   const fullPrompt = `Professional fashion photography, flat lay photo of ${prompt} clothing, clean white background, studio lighting, high resolution, 4k, highly detailed texture.`;
 
   try {
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: [
-        { text: fullPrompt }
-      ],
+      contents: {
+        parts: [{ text: fullPrompt }]
+      },
       config: {
          imageConfig: {
             aspectRatio: "1:1",
@@ -49,7 +48,7 @@ export const generateClothingImage = async (prompt: string): Promise<string> => 
  * Input: Person Base64, Cloth Base64
  */
 export const generateTryOnResult = async (personBase64: string, clothBase64: string): Promise<string> => {
-  if (!apiKey) throw new Error("未配置 API Key");
+  if (!process.env.API_KEY) throw new Error("未配置 API Key");
 
   // Construct the prompt to guide the model to perform a "swap" or "generation" based on reference.
   const prompt = `Generate a high-quality, photorealistic full-body photo of the person shown in the first image wearing the clothing shown in the second image. 

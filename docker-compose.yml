@@ -1,0 +1,27 @@
+services:
+  # Production style deployment (Nginx)
+  ai-fashion-app:
+    build:
+      context: .
+      args:
+        - API_KEY=${API_KEY}
+    ports:
+      - "8080:80"
+    restart: always
+    container_name: ai-fashion-prod
+
+  # Development server (Vite with hot reload)
+  # Usage: docker-compose up ai-fashion-dev
+  ai-fashion-dev:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - API_KEY=${API_KEY}
+    command: sh -c "npm install && npm run dev -- --host"
+    profiles:
+      - dev
