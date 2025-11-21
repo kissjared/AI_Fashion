@@ -1,0 +1,5 @@
+{
+  "name": "AI 霓裳 (AI Fashion Try-On)",
+  "description": "基于 Nano Banana 模型的智能换装应用，支持上传照片、生成服装及一键试穿。",
+  "requestFramePermissions": []
+}
